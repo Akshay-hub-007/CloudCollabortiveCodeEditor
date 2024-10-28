@@ -1,7 +1,7 @@
-"use client";
 
 import { X } from "lucide-react";
 import { Button } from "./button";
+import React from "react";
 
 export default function Tab({
   children,

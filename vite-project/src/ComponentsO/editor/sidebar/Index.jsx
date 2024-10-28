@@ -1,5 +1,5 @@
 import { FilePlus, FolderPlus, Loader2, Search } from "lucide-react";
-import SidebarFile from "./file";
+import SidebarFile from "./File";
 import SidebarFolder from "./Folder";
 import { useState } from "react";
 import New from "./New";
