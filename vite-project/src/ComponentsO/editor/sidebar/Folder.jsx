@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getIconForFolder, getIconForOpenFolder } from 'vscode-icons-js';
-import SidebarFile from './file';
+import SidebarFile from './File';
 
 function SidebarFolder({ data, selectFile ,handleRename,handleDeleteFile,handleDeleteFolder}) {
   const [isOpen, setIsOpen] = useState(false);
