@@ -1,5 +1,5 @@
 // Importing necessary modules
-const startercode = require("./storage/Startercode"); // Assign variable name to import
+const startercode = require("./Startercode"); // Assign variable name to import
 const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
 require('dotenv').config();
