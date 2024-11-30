@@ -9,13 +9,16 @@
   import DashboardProject from './DashboardProject'
   import NewProject from './NewProject'
 import { useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
+import AboutModal from './About'
 
 
 
   function Dashboard({ virtualBoxData,shared }) {
+    console.log(shared)
     const [screen, setScreen] = useState("projects");
     const [newProjectModalOpen,setNewProjectModalOpen]=useState(false);
-
+   const [aboutModalOpen,setAboutModalOpen]=useState(false);
     const activeScreen = (s) => {
       if (screen == s) return "justify-start"
       else return "justify-start font-normal text-muted-foreground"
@@ -27,19 +30,20 @@ import { useSearchParams } from 'react-router-dom'
   
     return (
       <>
+       <AboutModal  open={aboutModalOpen} setOpen={setAboutModalOpen} /> 
       <NewProject 
       open={newProjectModalOpen}
-      onOpenChange={setNewProjectModalOpen}/>
+      setOpen={setNewProjectModalOpen}/>
         <div className="flex grow w-full">
           <div className="w-56 shrink-0  border-border p-4  flex flex-col justify-stretch">
             <div className="flex flex-col">
               <CustomButton
                 className="mb-4"
                 onClick={() => {
-                  // if (virtualboxes.length >= 8) {
-                  //   toast.error("You reached the maximum # of virtualboxes");
-                  //   return;
-                  // }
+                  if (virtualBoxData.length >= 8) {
+                    toast.error("You reached the maximum # of virtualboxes");
+                    return;
+                  }
                   setNewProjectModalOpen(true);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                 }}
               >
@@ -80,7 +84,7 @@ import { useSearchParams } from 'react-router-dom'
                 Github Repo
               </Button>
               <Button
-                //   onClick={() => setAboutModalOpen(true)}
+                  onClick={() => setAboutModalOpen(true)}
                 // variant={"ghost"}
                 className="justify-start font-normal text-muted-foreground"
               >

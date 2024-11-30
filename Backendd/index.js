@@ -9,10 +9,16 @@ const Joi = require('joi');
 const path=require("path")
 const app = express();
 const { v4: uuidv4 } = require('uuid');
+const { colors } = require("./colours");
+
+const { Liveblocks } = require("@liveblocks/node");
+const { URL } = require("url");
 
 app.use(express.json());
 app.use(cors());
-
+const liveblocks = new Liveblocks({
+    secret: "sk_prod_MrS7ULPtVykBJJnYQ83Y9gLeMK7ykLh82SOHz3wtAKdZYK0uUn5_lDSS2vLsex6T",
+  })
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
@@ -87,7 +93,6 @@ app.get("/api/user/:id", async (req, res) => {
             virtualBoxes: virtualBoxData,
             userTovirtualboxData:userTovirtualboxData
         };
-
         res.send(combinedUserData);
     } catch (err) {
         console.error('Error fetching user and virtual boxes:', err);
@@ -186,33 +191,33 @@ app.delete("/api/virtualbox/:id", async (req, res) => {
   });
   app.get('/api/virtualbox/share', async (req, res) => {
     try {
-      const { id } = req.query; 
-      if (!id) {
-        return res.status(400).json({ error: 'Invalid request, missing user id' });
-      }
-      const sharedBoxes = await UsersToVirtualboxes.find({ userId: id });
-      const owners = await Promise.all(
-        sharedBoxes.map(async (sharedBox) => {
-          const vb = await Virtualbox.findOne({ id: sharedBox.virtualboxId});
-          if (!vb) return null;
-
-          const author = await User.findOne({ id: vb.userId });
-          return {
-            id: vb._id,
-            name: vb.name,
-            type: vb.type,
-            author: {
-              id: author._id,
-              name: author.name,
-              email: author.email,
-            },
-            sharedOn: sharedBox.sharedOn,
-          };
-        })
-      );
+        const { id } = req.query; 
+        if (!id) {
+          return res.status(400).json({ error: 'Invalid request, missing user id' });
+        }
+        const sharedBoxes = await UsersToVirtualboxes.find({ userId:id });
+        const owners = await Promise.all(
+          sharedBoxes.map(async (sharedBox) => {
+            const vb = await Virtualbox.findOne({ id: sharedBox.virtualboxId});
+            if (!vb) return null;
   
-      return res.json(owners.filter(Boolean)); 
-    } catch (error) {
+            const author = await User.findOne({ id: vb.userId });
+            return {
+              id: vb.id,
+              name: vb.name,
+              type: vb.type,
+              author: {
+                id: author.id,
+                name: author.name,
+                email: author.email,
+              },
+              sharedOn: sharedBox.sharedOn,
+            };
+          })
+        );
+    
+        return res.json(owners.filter(Boolean)); 
+      } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Server error' });
     }
@@ -361,6 +366,29 @@ app.delete("/api", async (req, res) => {
         res.status(500).json({ message: "Server error", error: err.message });
     }
 });
+app.get('/api/size', async (req, res) => {
+	try {
+		const { virtualboxId } = req.query;
+
+		if (!virtualboxId) {
+			return res.status(400).json({ error: 'Invalid request: missing virtualboxId parameter' });
+		}
+
+		// Use regex to match documents where a field starts with the given prefix
+		const result = await Bucket.find({ fileId: { $regex: `^projects/${virtualboxId}` } });
+
+		let size = 0;
+		for (const file of result) {
+			size += file.size;
+		}
+
+		return res.status(200).json({ size });
+	} catch (error) {
+		console.error('Error calculating size:', error);
+		return res.status(500).json({ error: 'Server error' });
+	}
+});
+
 
 app.put('/api/virtualbox', async (req, res) => {
     try {
@@ -432,36 +460,228 @@ app.post('/api/init', async (req, res) => {
     }
 });
 
-app.post("/api/generate", async (req, res) => {
+// app.post("/api/generate", async (req, res) => {
+//     try {
+//         const { userId } = req.body;
+
+//         const dbUser = await User.findOne({ id: userId });
+//         console.log(dbUser);
+        
+//         if (!dbUser) {
+//             return res.status(404).send("User not found");
+//         }
+
+//         if (dbUser.generations == null) {
+//             await User.findOneAndUpdate({ id: userId }, { generations: true });
+//             return res.status(200).send("Generations set to true");
+//         }
+
+//         if (dbUser.generations !== null && dbUser.generations >= 30) {
+//             return res.status(400).send("You reached the maximum # of generations.");
+//         }
+
+//         await User.findOneAndUpdate({ id: userId }, { generations: dbUser.generations + 1 });
+//         res.status(200).send("Generation updated successfully");
+        
+//     } catch (err) {
+//         console.log("Unable to generate:", err);
+//         res.status(500).send("Internal Server Error");
+//     }
+// });
+app.post('/api/virtualbox/generate', async (req, res) => {
     try {
-        const { userId } = req.body;
-
-        const dbUser = await User.findOne({ id: userId });
-        console.log(dbUser);
-        
-        if (!dbUser) {
-            return res.status(404).send("User not found");
-        }
-
-        if (dbUser.generations == null) {
-            await User.findOneAndUpdate({ id: userId }, { generations: true });
-            return res.status(200).send("Generations set to true");
-        }
-
-        if (dbUser.generations !== null && dbUser.generations >= 30) {
-            return res.status(400).send("You reached the maximum # of generations.");
-        }
-
-        await User.findOneAndUpdate({ id: userId }, { generations: dbUser.generations + 1 });
-        res.status(200).send("Generation updated successfully");
-        
-    } catch (err) {
-        console.log("Unable to generate:", err);
-        res.status(500).send("Internal Server Error");
+      const { userId } = req.body;
+  
+      const dbUser = await User.findOne({ id: userId });
+  
+      if (!dbUser) {
+        return res.status(400).send('User not found');
+      }
+  
+      const generations = dbUser.generations ?? 0;
+  
+      if (generations >= 30) {
+        return res.status(400).send('You reached the maximum # of generations.');
+      }
+  
+      await User.findOneAndUpdate(
+        { id: userId },
+        { $inc: { generations: 1 } }
+      );
+  
+      res.send({ success: true });
+    } catch (error) {
+      res.status(500).send({ error: error.message });
     }
-});
+  });
+  
+// // const MAX_ROOMS_PER_TOKEN = 10;
 
+// app.post("/api/liveblocks/:id", async (req, res) => {
+//   const userId = req.params.id;
+//   if (!userId) {
+//     return res.status(401).send("Unauthorized");
+//   }
+
+//   try {
+//     // Fetch user data
+//     const userResponse = await fetch(`http://localhost:3000/api/user/${userId}`, {
+//       method: "GET"
+//     });
+//     const user = await userResponse.json();
+
+//     const colorNames = Object.keys(colors);
+//     const randomColor = colorNames[Math.floor(Math.random() * colorNames.length)];
+
+//     // Prepare the list of rooms
+//     const rooms = [...user.virtualBoxes.map(vb => vb.id), ...user.userTovirtualboxData.map(utv => utv.virtualboxId)];
+
+//     // Split rooms into batches
+//     for (let i = 0; i < rooms.length; i += MAX_ROOMS_PER_TOKEN) {
+//       const roomBatch = rooms.slice(i, i + MAX_ROOMS_PER_TOKEN);
+
+//       // Create a new session for each batch
+//       const session = liveblocks.prepareSession(user.id, {
+//         userInfo: {
+//           id: user.id,
+//           name: user.name,
+//           email: user.email,
+//           color: randomColor,
+//         },
+//       });
+
+//       // Set permissions for each room in the batch
+//       roomBatch.forEach((roomId) => {
+//         session.allow(`${roomId}`, session.FULL_ACCESS);
+//       });
+
+//       // Authorize the session
+//       const { body, status } = await session.authorize();
+      
+//       // Check if authorization failed for this batch
+//       if (status !== 200) {
+//         console.error("Authorization failed for batch:", roomBatch);
+//         return res.status(status).send(body);
+//       }
+
+//       // Send the response for the last authorized batch
+//       if (i + MAX_ROOMS_PER_TOKEN >= rooms.length) {
+//         res.status(status).send(body);
+//       }
+//     }
+//   } catch (error) {
+//     console.error("Error authorizing session:", error);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
+//orginal
+app.post("/api/liveblocks/:id", async (req, res) => {
+
+  const userId=req.params.id
+    if (!userId) {
+      return res.status(401).send("Unauthorized");
+    }
+  
+    try {
+
+        const userResponse = await fetch(
+            `http://localhost:3000/api/user/${userId}`,
+            {
+              method: "GET" 
+            }
+          );
+       console.log("hell",userResponse)
+      const user = await userResponse.json();
+      console.log(user)
+      const colorNames = Object.keys(colors);
+      const randomColor = colorNames[Math.floor(Math.random() * colorNames.length)];
+      const code = colors[randomColor];
+  
+      const session = liveblocks.prepareSession(user.id, {
+        userInfo: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          color: randomColor,
+        },
+      });
+  
+      // Set permissions for each virtualbox
+      user.virtualBoxes.forEach((virtualbox) => {
+        session.allow(`${virtualbox.id}`, session.FULL_ACCESS);
+      });
+  
+      user.userTovirtualboxData.forEach((userToVirtualbox) => {
+        session.allow(`${userToVirtualbox.virtualboxId}`, session.FULL_ACCESS);
+      });
+  
+      const { body, status } = await session.authorize();
+      res.status(status).send(body);
+    } catch (error) {
+      console.error("Error authorizing session:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
 // Start the server
+
+const MAX_ROOMS_PER_TOKEN = 20;
+
+// app.post("/api/liveblocks/:id", async (req, res) => {
+//   const userId = req.params.id;
+//   if (!userId) {
+//     return res.status(401).send("Unauthorized");
+//   }
+
+//   try {
+//     // Fetch user data
+//     const userResponse = await fetch(`http://localhost:3000/api/user/${userId}`, {
+//       method: "GET"
+//     });
+//     const user = await userResponse.json();
+
+//     const colorNames = Object.keys(colors);
+//     const randomColor = colorNames[Math.floor(Math.random() * colorNames.length)];
+
+//     // Gather room IDs
+//     const rooms = [
+//       ...user.virtualBoxes.map(vb => vb.id),
+//       ...user.userTovirtualboxData.map(utv => utv.virtualboxId)
+//     ];
+
+//     // Process rooms in batches of up to 10
+//     for (let i = 0; i < rooms.length; i += MAX_ROOMS_PER_TOKEN) {
+//       const roomBatch = rooms.slice(i, i + MAX_ROOMS_PER_TOKEN);
+
+//       // Create a new session for each batch
+//       const session = liveblocks.prepareSession(user.id, {
+//         userInfo: {
+//           id: user.id,
+//           name: user.name,
+//           email: user.email,
+//           color: randomColor,
+//         },
+//       });
+
+//       // Set permissions for each room in the batch
+//       roomBatch.forEach((roomId) => {
+//         session.allow(roomId, session.FULL_ACCESS);
+//       });
+
+//       // Authorize session and handle response
+//       const { body, status } = await session.authorize();
+      
+//       // Send response for last batch only
+//       if (i + MAX_ROOMS_PER_TOKEN >= rooms.length) {
+//         return res.status(status).send(body);
+//       }
+//     }
+//   } catch (error) {
+//     console.error("Error authorizing session:", error);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });

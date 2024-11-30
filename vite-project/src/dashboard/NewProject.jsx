@@ -12,6 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
 import ReactIcon from '../../public/project-icons/react.svg'; 
 import NodeIcon from '../../public/project-icons/node.svg';
+import PythonIcon from "../../public/project-icons/python.svg"
+import MoreIcon from "../../public/project-icons/more.svg"
 import { createVirtualBox } from '../lib/actions';
 
 function NewProject({ open, onOpenChange }) {
@@ -26,13 +28,29 @@ function NewProject({ open, onOpenChange }) {
       name: "React",
       icon: ReactIcon,
       description: "A JavaScript library for building user interfaces",
+      disabled:false
     },
     {
       id: "node",
       name: "Node",
       icon: NodeIcon,
       description: "A JavaScript runtime built on the V8 JavaScript engine",
+      disabled:false
     },
+    {
+      id:"python",
+      name:"Python",
+      icon:PythonIcon,
+      description:"A high-level ,general-purpose language coming soon",
+      disabled:true
+    },
+    {
+      id:"more",
+      name:"More Languages",
+      icon:MoreIcon,
+      description:"More coming soon!!",
+      disabled:true
+    }
   ];
 
   const formSchema = z.object({
@@ -69,7 +87,7 @@ function NewProject({ open, onOpenChange }) {
       <Dialog
         open={open}
         onOpenChange={(open) => {
-          if (!loading) onOpenChange(open);
+          if (!loading) setOpen(open);
         }}
       >
         <DialogContent>
@@ -79,6 +97,7 @@ function NewProject({ open, onOpenChange }) {
           <div className="grid grid-cols-2 w-full gap-2 mt-2">
             {data.map((item) => (
               <button
+              disabled={item.disabled || loading}
                 onClick={() => setSelected(item.id)}
                 key={item.id}
                 className={`${selected === item.id ? "border-red-500" : "border-border"
@@ -105,6 +124,7 @@ function NewProject({ open, onOpenChange }) {
                     <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input
+                      disabled={loading}
                         placeholder="My project..."
                         {...field}
                       />
@@ -119,6 +139,7 @@ function NewProject({ open, onOpenChange }) {
                   <FormItem className="mb-8">
                     <FormLabel>Visibility</FormLabel>
                     <Select
+                    disabled={loading}
                       onValueChange={field.onChange}
                       value={field.value} // Use value for controlled components
                     >

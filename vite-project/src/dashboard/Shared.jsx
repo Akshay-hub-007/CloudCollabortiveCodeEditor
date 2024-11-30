@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Button } from '../components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import Avatar from '../components/ui/avatar';
+import { Link } from 'react-router-dom';
 
 function Shared({ virtualBox ,shared}) {
   console.log(shared)
@@ -11,7 +12,9 @@ function Shared({ virtualBox ,shared}) {
     <>
       <div className='grow p-4 flex flex-col'>
         <div className='text-xl font-medium mb-8'>Shared with Me</div>
-        <div display="grow w-full">
+        {shared.length>0 ? 
+         <>
+          <div className="grow w-full">
           <Table>
             <TableHeader>
               <TableRow>
@@ -22,8 +25,9 @@ function Shared({ virtualBox ,shared}) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {shared.map((share) => (
-                <TableRow key={share.id}> 
+              {shared.map((share,index) => (
+                <TableRow key={index}> 
+                
                   <TableCell>
                     <div className="font-medium flex items-center">
                       <img
@@ -44,15 +48,25 @@ function Shared({ virtualBox ,shared}) {
                   {share.sharedOn ? new Date(share.sharedOn).toLocaleDateString() : 'N/A'}
                 </TableCell>
                   <TableCell className="text-right">
+                  <Link to={`/code-editor/${share.id}`}>
+
                     <Button  variant={"secondary"}>
                       Open <ChevronRight className="h-4 w-4 ml-2" />
                     </Button>
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </div>
+          </div>
+          </>
+            :(
+          <div>
+            No virtualboxes here.Get a friend  to share  one with you and try live collaboration
+          </div>
+        )}
+  
       </div>
     </>
   );

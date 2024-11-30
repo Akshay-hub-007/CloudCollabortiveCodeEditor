@@ -2,14 +2,26 @@ import { Ghost, Loader2, Pencil, Trash2 } from 'lucide-react'; // Ensure you imp
 import React, { useState, useEffect, useRef } from 'react';
 import { getIconForFile } from 'vscode-icons-js';
 import { ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem } from "../../../components/ui/context-menu";
+import {draggable} from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 
-function SidebarFile({ data, selectFile, handleRename, handleDeleteFile }) {
+function SidebarFile({ data, selectFile, handleRename, handleDeleteFile,movingId,deletingFolderId}) {
+ 
+ console.log(data)
   const iconPath = getIconForFile(data.name);
   const [imgSrc, setImageSrc] = useState(iconPath ? `/icons/${iconPath}` : null);
   const [editing, setEditing] = useState(false);
   const inputRef = useRef(null);
-  const [pendingDelete, setPendingDelete] = useState(false);
+  const isDeleting=deletingFolderId?.length>0 && data.id.startsWith(deletingFolderId)
 
+  const [pendingDelete, setPendingDelete] = useState(isDeleting);
+
+  const isMoving=movingId===data.id
+
+  const ref=useRef(null)
+  const [draging,setDragging]=useState(false)
+  useEffect(()=>{
+    setPendingDelete(isDeleting)
+  },[isDeleting])
   const handleError = () => {
     setImageSrc('/icons/default_file.svg'); // Updated default file path
   };
@@ -34,25 +46,43 @@ function SidebarFile({ data, selectFile, handleRename, handleDeleteFile }) {
     setEditing(false);
   };
 
+  useEffect(()=>{
+    const el=ref.current
+    if(el)
+    {
+      return draggable({
+        element:el,
+        onDragStart:()=>setDragging(true),
+        onDrop:()=> setDragging(false),
+        getInitialData:()=>({id:data.id})
+      })
+    }
+  },[data.id])
   return (
     <>
       <ContextMenu>
         <ContextMenuTrigger
-          disabled={pendingDelete}
+             ref={ref}
+          disabled={pendingDelete || draging|| isMoving}
           onClick={() => {
-            if (!editing && !pendingDelete) {
+            if (!editing && !pendingDelete && !isMoving) {
               selectFile({ ...data, saved: true });
             }
           }}
-          className="data-[state=open]:bg-secondary/50 w-full flex items-center h-7 px-1 hover:bg-ghost rounded-sm cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-ring"
+          className={`${draging? "opacity-50 hover:bg-background":""} data-[state=open]:bg-secondary/50 w-full flex items-center h-7 px-1 hover:bg-ghost rounded-sm cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-ring`}
         >
           <img src={imgSrc} alt="" width={18} height={18} className='mr-2' onError={handleError} />
-          {pendingDelete ? (
-            <>
-              <Loader2 className="text-muted-foreground w-4 h-4 animated-spin mr-2" />
-              <div className='text-muted-foreground'></div>
-            </>
-          ) : (
+         {isMoving?(
+          <>
+              <Loader2 className="text-muted-foreground w-4 h-4 animate-spin mr-2" />
+         <div className='text-muted-foreground'>{data.name}</div>
+          </>
+         ):pendingDelete?(
+          <>
+          <Loader2 className="text-muted-foreground w-4 h-4 animate-spin mr-2" />
+          <div className='text-muted-foreground'></div>
+        </>
+         ) : (
             <form
               onSubmit={(e) => {
                 e.preventDefault();

@@ -25,6 +25,9 @@ function GenerateInput({ cancel, submit, width, onExpand, onAccept, data, editor
     }, []);
 
     const handleGenerateCode = (regenerate, input) => {
+        if (data.generations >= 30) {
+            toast.error("You reached the maximum # of generations.");
+          }
         console.log(input)
         setLoading({ generate: !regenerate, regenerate });
         setPrompt(input);

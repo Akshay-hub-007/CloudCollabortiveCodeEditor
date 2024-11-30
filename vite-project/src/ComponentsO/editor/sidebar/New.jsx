@@ -12,9 +12,16 @@ function New({ socket, type, stopEditing, addNew }) {
     // Validate the name before proceeding
     if (name && validateName(name,"", type)) {
       if (type === 'file') {
-        socket.emit("createFile", name);
+        socket.emit("createFile", name,(success)=>{
+          if(success)
+          {
+            addNew(name,type);
+          }
+        });
+      }else{
+        socket.emit("createFolder",name,type)
+        addNew(name,type)
       }
-      addNew(name, type);
     }
     stopEditing();
   };

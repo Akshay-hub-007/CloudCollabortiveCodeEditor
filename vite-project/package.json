@@ -10,10 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "^1.4.0",
     "@clerk/clerk-react": "^5.9.0",
     "@clerk/themes": "^2.1.30",
+    "@google/generative-ai": "^0.21.0",
     "@hookform/resolvers": "^3.9.0",
+    "@liveblocks/client": "^1.12.0",
+    "@liveblocks/node": "^1.12.0",
+    "@liveblocks/react": "^1.12.0",
+    "@liveblocks/yjs": "^1.12.0",
     "@monaco-editor/react": "^4.6.0",
+    "@paralleldrive/cuid2": "^2.2.2",
     "@radix-ui/react-context-menu": "^2.2.2",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
@@ -21,6 +28,7 @@
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-switch": "^1.1.1",
     "@vscode/codicons": "^0.0.36",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
@@ -28,6 +36,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.441.0",
+    "monaco-editor": "^0.52.0",
     "next-themes": "^0.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -40,7 +49,11 @@
     "styled-components": "^6.1.13",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^10.0.0",
     "vscode-icons-js": "^11.6.1",
+    "y-monaco": "^0.1.6",
+    "y-protocols": "^1.0.6",
+    "yjs": "^13.6.20",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -56,6 +69,7 @@
     "globals": "^15.9.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.11",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vite-plugin-monaco-editor": "^1.1.0"
   }
 }

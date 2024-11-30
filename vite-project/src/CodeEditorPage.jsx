@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from "react-router-dom"; 
+import { useNavigate, useParams } from "react-router-dom"; 
 import axios from "axios";
 import CodeEditor from "./ComponentsO/editor/index";
 import Navbar from "./ComponentsO/editor/navbar/Navbar";
 import { useUser } from '@clerk/clerk-react';
 import { HashLoader } from 'react-spinners';
+import Room from './ComponentsO/editor/live/Room';
 
 export default function CodeEditorPage() {
   const { isLoaded, user } = useUser();
@@ -13,11 +14,17 @@ export default function CodeEditorPage() {
   const [virtualboxData, setVirtualboxData] = useState(null);
   const [sharedData, setSharedData] = useState([]);
   const [sendData, setSendData] = useState([]);
-
+  const navigate=useNavigate()
+ console.log(user)
   const virtualboxId = id;
+console.log(virtualboxId)
 
   // Fetch user and virtualbox data
   useEffect(() => {
+    if(!user)
+      {
+         navigate("/dashboard")
+      }
     if (isLoaded && user && virtualboxId) {
       const fetchUserData = async () => {
         try {
@@ -75,7 +82,8 @@ export default function CodeEditorPage() {
 
     getSharedUsers();
   }, [sharedData]);
-
+  const isOwner=virtualboxData?.userId==user?.id
+  const isSharedUser=sharedData.some((u)=>u.id==user?.id)
   if (!isLoaded || !userData || !virtualboxData) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -84,16 +92,28 @@ export default function CodeEditorPage() {
     );
   }
 
-  console.log("Sending to Navbar shared prop:", sendData); // Debugging log
+  console.log("Sending to Navbar shared prop:", sendData); 
   console.log(userData);
+  console.log(virtualboxData)
+  console.log(isSharedUser)
   return (
+   <>
+ 
+
+    <Room id={virtualboxId} initialPresence={{}}>
     <div className="flex w-screen flex-col h-screen bg-background">
       <div className="h-12 flex m-2">
         <Navbar userData={userData} virtualboxData={virtualboxData} Shared={sendData} />
       </div>
       <div className="w-screen flex grow">
-        <CodeEditor userData={user} virtualboxId={virtualboxId} />
+        <CodeEditor 
+        userData={userData}
+        virtualboxData={virtualboxData} 
+        isSharedUser={true}
+        />
       </div>
     </div>
+    </Room>
+   </>
   );
 }

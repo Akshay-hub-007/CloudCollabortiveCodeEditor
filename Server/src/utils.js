@@ -121,6 +121,20 @@ const saveFile = async (fileId, data) => {
     }
   };
   
-// generateCode("akshay.py", "", 0, "give me a toString function of student object contains name,age,dob");
+const getProjectSize=async(id)=>{
+  const res = await fetch(`http://localhost:3000/api/size${id}`)
 
-  module.exports = { renamedFile, saveFile,createFile,deleteFile,generateCode };
+  return (await res.json()).size;
+
+}
+
+const getfolder = async (folderId) => {
+  const res = await fetch(`http://localhost:3000/api?folderId=${folderId}`);
+  if (!res.ok) {
+      throw new Error('Network response was not ok');
+  }
+  const data = await res.json(); // Assuming the response is JSON
+  return data.map((obj) => obj.key); 
+};
+
+  module.exports = { renamedFile, saveFile,createFile,deleteFile,generateCode,getProjectSize ,getfolder};

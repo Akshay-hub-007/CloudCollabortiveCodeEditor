@@ -5,13 +5,14 @@ import { decodeTerminalResponse } from "../../../lib/utils";
 import { FitAddon } from "@xterm/addon-fit";
 import "./xterm.css"
 import { Loader, Loader2 } from "lucide-react";
-export default function EditorTerminal({ socket }) {
+export default function EditorTerminal({id, socket,term,setTerm,visible }) {
   const terminalRef = useRef(null);
-  const [term, setTerm] = useState(null);
+  // const [term, setTerm] = useState(null);
 
   useEffect(() => {
     if (!terminalRef.current) return;
 
+     if(term) return;
     const terminal = new Terminal({
       cursorBlink: true,
       theme:{
@@ -19,7 +20,9 @@ export default function EditorTerminal({ socket }) {
       },
       fontSize:14,
       fontFamily:"var(--font-geist-mono)",
-   
+      lineHeight:1.5,
+      letterSpacing:0,
+
     });
 
     setTerm(terminal);
@@ -27,57 +30,44 @@ export default function EditorTerminal({ socket }) {
     return () => {
       if (terminal) terminal.dispose();
     };
-  }, []);
+  }, [terminalRef.current]);
 
-  useEffect(() => {
-    if (!term) return;
+useEffect(() => {
+  if (!term || !terminalRef.current) return;
 
-    const terminalId = "testId";  // Replace with dynamic ID if needed
+  const fitAddon = new FitAddon();
+  term.loadAddon(fitAddon);
+  term.open(terminalRef.current);
+  fitAddon.fit();
 
-    const onConnect = () => {
-      setTimeout(() => {
-        socket.emit("createTerminal", terminalId);
-      }, 500);
-    };
+  const disposableOnData = term.onData((data) => {
+    term.write(data)
+    socket.emit("terminalData", id, data);
+  });
 
-    const onTerminalResponse = (response) => {
-        const res=response.data
-        console.log("terminal Response",response)
-        term.write(res)
-    };
-
-    socket.on("connect", onConnect);
-    socket.on("terminalResponse", onTerminalResponse);
-
-    const fitAddon = new FitAddon();
-    term.loadAddon(fitAddon);
-    term.open(terminalRef.current);
+  const disposableOnResize = term.onResize((dimensions) => {
     fitAddon.fit();
+    socket.emit("terminalResize", dimensions);
+  });
 
-    const disposable = term.onData((data) => {
-      socket.emit("terminalData", 
-        "testId", // Pass terminal ID
-        data,
-      );
-    });
+  return () => {
+    disposableOnData.dispose();
+    disposableOnResize.dispose();
+  };
+}, [term, socket, id]);
 
-    socket.emit("terminalData", "\n");
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("terminalResponse", onTerminalResponse);
-      disposable.dispose();
-    };
-
-  }, [term, socket]);
-
-  return (
-    <div ref={terminalRef} className="w-full h-full  text-sm text-left">
-      {term===null? (
-        <div className="flex items-center text-muted-foreground p-2">
+return (
+  <div 
+    ref={terminalRef}  
+    style={{display: visible ? "block" : "none"}} 
+    className="w-full h-full text-left"
+  >
+    {term === null ? (
+      <div className="flex items-center text-muted-foreground p-2">
         <Loader2 className="animate-spin mr-2 w-4 h-4"/>
         <span>Connecting to terminal....</span>
-      </div>):null}
-    </div>
-  );
+      </div>
+    ) : null}
+  </div>
+);
 }

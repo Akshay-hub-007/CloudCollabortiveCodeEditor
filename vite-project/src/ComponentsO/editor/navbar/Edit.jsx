@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { useNavigate } from 'react-router-dom';
 import { deleteVirtualBox, updateVirtualBox } from '../../../lib/actions';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 function EditVirtualboxModal({ open, setOpen, data }) {
   const formSchema = z.object({
@@ -48,6 +49,7 @@ function EditVirtualboxModal({ open, setOpen, data }) {
     console.log(formData);
     try {
       await updateVirtualBox({ id: data.id, ...formData });
+    toast.success("virtualbox updated successfully")
     } catch (error) {
       console.error("Error updating virtualbox:", error);
     } finally {
