@@ -7,7 +7,7 @@
     "dev": "nodemon index.js",
     "build": "echo 'No build steps needed'",
     "test": "echo \"Error: no test specified\" && exit 1",
-     "postinstall": "npm rebuild node-pty --build-from-source"
+    "postinstall": "npm rebuild node-pty --build-from-source"
   },
   "author": "",
   "license": "ISC",
@@ -25,15 +25,12 @@
     "node-pty-win": "^0.0.1",
     "socket.io": "^4.8.0",
     "windows": "^0.1.2",
-    "zod": "^3.23.8",
-    "nodemon": "^3.1.7"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
   },
-"engines": {
+  "engines": {
     "node": "18.x"
   }
 }
-
-update this package.json to correct the above error 
