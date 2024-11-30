@@ -3,23 +3,19 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "build": "echo 'No build steps needed'",
-    "postinstall": "npm rebuild node-pty --build-from-source --python=/usr/bin/python3"
+    "start": "bun index.js",
+    "dev": "bun index.js --watch",
+    "postinstall": "bun pm rebuild node-pty"
   },
   "dependencies": {
     "node-pty": "^0.10.0",
     "express": "^4.21.0",
     "cors": "^2.8.5",
-    "socket.io": "^4.8.0",
     "dotenv": "^16.4.5",
+    "socket.io": "^4.8.0",
     "zod": "^3.23.8"
   },
-  "devDependencies": {
-    "nodemon": "^3.1.7"
-  },
   "engines": {
-    "node": "18.x"
+    "bun": "1.1.0"
   }
 }
