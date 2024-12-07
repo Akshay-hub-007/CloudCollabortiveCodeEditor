@@ -22,7 +22,7 @@ function DashBoardPage() {
   console.log(user.id)
     const fetchVirtualData = async () => {
       try {
-        const response = await axios.get(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api/user/virtualbox/${user.id}`);
+        const response = await axios.get(`https://cloudcollabortivecodeeditor-backend.onrender.com/api/user/virtualbox/${user.id}`);
         console.log(response.data.virtualBoxes)
         setVirtualBox(response.data.virtualBoxes);
         return response.data; 
@@ -33,7 +33,7 @@ function DashBoardPage() {
     };
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api/user/${user.id}`);
+        const response = await axios.get(`https://cloudcollabortivecodeeditor-backend.onrender.com/api/user/${user.id}`);
         setUserData(response.data);
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -41,7 +41,7 @@ function DashBoardPage() {
     };
      const shareRes=async()=>{
       try{
-        const response=await axios.get(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api/virtualbox/share?id=${user.id}`);
+        const response=await axios.get(`https://cloudcollabortivecodeeditor-backend.onrender.com/api/virtualbox/share?id=${user.id}`);
         console.log(response.data);
         setShared(response.data)
        

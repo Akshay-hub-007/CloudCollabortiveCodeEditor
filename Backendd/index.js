@@ -17,7 +17,7 @@ const { URL } = require("url");
 app.use(express.json());
 app.use(cors(
     {
-     origin:["https://cloudcollabortivecodeeditor-1-to4i.onrender.com",'https://cloud-collabortive-code-editor.vercel.app','http://localhost:5173'],
+     origin:['https://cloud-collabortive-code-editor.vercel.app','http://localhost:5173'],
      credentials:true
     }
 ));
@@ -60,6 +60,7 @@ const bucketSchema = new Schema({
 const usersToVirtualboxesSchema = new Schema({
     userId: { type: String, required: true, ref: 'User' },
     virtualboxId: { type: String, required: true, ref: 'Virtualbox' },
+    permission:{type:String,default:"write"},
     sharedOn: { type: Date, default: Date.now },
   });
   // Model Definitions
@@ -84,42 +85,50 @@ app.get("/api/user", async (req, res) => {
 // Fetch user by ID with virtual box data
 app.get("/api/user/:id", async (req, res) => {
     const id = req.params.id;
-
+    console.log(id, "gh");
     try {
-        const user = await User.findOne({ id });
-        // if (!user) {
-        //     return res.status(404).send('User not found');
-        // }
+        if (id) {
+            const user = await User.findOne({ id: id });
+            console.log(user, "gf");
 
-        const virtualBoxData = await Virtualbox.find({ userId: user.id });
-        const userTovirtualboxData=await UsersToVirtualboxes.find({userId:user.id})
-        const combinedUserData = {
-            ...user.toObject(),
-            virtualBoxes: virtualBoxData,
-            userTovirtualboxData:userTovirtualboxData
-        };
-        res.send(combinedUserData);
+            // if (!user) {
+            //     return res.status(404).send({ message: 'User not found' });
+            // }
+
+            // Ensure empty arrays if no data is found
+            const virtualBoxData = await Virtualbox.find({ userId: user.id }) || [];
+            const userTovirtualboxData = await UsersToVirtualboxes.find({ userId: user.id }) || [];
+
+            const combinedUserData = {
+                ...user.toObject(),
+                virtualBoxes: virtualBoxData,
+                userTovirtualboxData: userTovirtualboxData
+            };
+
+            res.send(combinedUserData);
+        } else {
+            res.status(400).send({ message: 'Invalid user ID' });
+        }
     } catch (err) {
         console.error('Error fetching user and virtual boxes:', err);
         res.status(500).send('Internal Server Error');
     }
 });
 
+
 // Fetch virtual boxes by userId
 app.get("/api/user/virtualbox/:userId", async (req, res) => {
-    const userId = String(req.params.userId);
-
+    const userId = String(req.params.userId); 
     try {
-        const virtualBoxData = await Virtualbox.find({ userId }) || [];
-        // if (!virtualBoxData || virtualBoxData.length === 0) {
-        //     return res.status(404).send("No virtual box data found");
-        // }
-        const userTovirtualboxData=await UsersToVirtualboxes.find({userId:userId}) || []
+        const virtualBoxData = await Virtualbox.find({ userId });
+
+        const userTovirtualboxData = await UsersToVirtualboxes.find({ userId });
+
         const combinedUserData = {
-            // ...user.toObject(),
-            virtualBoxes: virtualBoxData,
-            userTovirtualboxData:userTovirtualboxData
-        }
+            virtualBoxes: virtualBoxData.length > 0 ? virtualBoxData : [], // Will be an empty array if no data
+            userTovirtualboxData: userTovirtualboxData.length > 0 ? userTovirtualboxData : [] // Will be an empty array if no data
+        };
+
         res.send(combinedUserData);
     } catch (err) {
         console.error('Error fetching virtual box:', err);
@@ -229,8 +238,8 @@ app.delete("/api/virtualbox/:id", async (req, res) => {
   });
   
 app.post("/api/virtualbox/share", async (req, res) => {
-    const { virtualboxId, email } = req.body;
-
+    const { virtualboxId, email,permission } = req.body;
+  console.log( virtualboxId, email,permission,"this virtual box sharing")
     try {
         const user = await User.findOne({ email: email });
         if (!user) {
@@ -243,7 +252,9 @@ app.post("/api/virtualbox/share", async (req, res) => {
         await UsersToVirtualboxes.create({
             userId: user.id,
             virtualboxId: virtualboxId,
-            // sharedOn: Date.now(), // store current timestamp
+            permission,
+            sharedOn: Date.now(),
+            
         });
         return res.status(200).json({ message: "Virtualbox shared successfully" });
     } catch (err) {
@@ -251,9 +262,9 @@ app.post("/api/virtualbox/share", async (req, res) => {
     }
 });
 app.delete("/api/virtualbox/share", async (req, res) => {
-    console.log("hello");
+   
     const { virtualboxId, userId } = req.body;
-
+    console.log( virtualboxId, userId,"deleting of virtualboxes");
     try {
         await UsersToVirtualboxes.deleteMany({ userId: userId, virtualboxId: virtualboxId });
         return res.status(200).send("success");
@@ -291,9 +302,9 @@ app.get("/api/virtualbox/:id", async (req, res) => {
     const id = req.params.id;
     try {
         const virtualboxData = await Virtualbox.findOne({ id });
-        // if (!virtualboxData) {
-        //     return res.status(404).send("No virtual box data found");
-        // }
+        if (!virtualboxData) {
+            return res.status(404).send("No virtual box data found");
+        }
         const usersToVirtualboxes = await UsersToVirtualboxes.find({
             virtualboxId:id})
      
@@ -628,7 +639,20 @@ app.post("/api/liveblocks/:id", async (req, res) => {
       res.status(500).send("Internal Server Error");
     }
   });
-  
+  app.post('/api/user', async (req, res) => {
+    try {
+      
+        console.log(req.body);
+        const { id, name, email } =  req.body;
+
+        const result = await User.create({ id, name, email });
+
+        res.status(201).send(result);
+    } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+    }
+});
 // Start the server
 
 const MAX_ROOMS_PER_TOKEN = 20;
@@ -688,6 +712,6 @@ const MAX_ROOMS_PER_TOKEN = 20;
 //   }
 // });
 
-app.listen(port, () => {
+app.listen(3000, () => {
     console.log(`Server running on port ${port}`);
 });
