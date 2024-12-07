@@ -56,11 +56,13 @@ function CodeEditor({ userData, virtualboxData, isSharedUser }) {
   const previewPanelRef=useRef(null);
   let socket;
   console.log(userData,virtualboxData)
+  const serverUrl = 'https://cloudcollabortivecodeeditor-1.onrender.com'
   useEffect(() => {
     if (userData && virtualboxData) {
       console.log(virtualboxData, userData.id)
-      socketRef.current = io(`http://localhost:4000?userId=${userData.id}&virtualboxId=${virtualboxData.id}`);
+      socketRef.current = io(`${serverUrl}?userId=${userData.id}&virtualboxId=${virtualboxData.id}`);
       socket = socketRef.current;
+      console.log(socket)
       const resizeObserver = new ResizeObserver((entries) => {
         for (const entry of entries) {
           const { width } = entry.contentRect
@@ -214,10 +216,10 @@ function CodeEditor({ userData, virtualboxData, isSharedUser }) {
             : terminals[index - 1].id
         : activeterminalId
 
-      // if(activeTerminal && activeTerminal.terminal)
-      // {
-      //   activeTerminal.terminal.dispose()
-      // }
+      if(activeTerminal && activeTerminal.terminal)
+      {
+        activeTerminal.terminal.dispose()
+      }
       setTerminals((prev) => prev.filter((t) => t.id !== term.id));
       if (!nextId) {
         setActiveTerminalId("")

@@ -15,7 +15,12 @@ const { Liveblocks } = require("@liveblocks/node");
 const { URL } = require("url");
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(
+    {
+     origin:['https://cloud-collabortive-code-editor.vercel.app','http://localhost:5173'],
+     credentials:true
+    }
+));
 const liveblocks = new Liveblocks({
     secret: "sk_prod_MrS7ULPtVykBJJnYQ83Y9gLeMK7ykLh82SOHz3wtAKdZYK0uUn5_lDSS2vLsex6T",
   })
@@ -405,11 +410,12 @@ app.put('/api/virtualbox', async (req, res) => {
         const savedVirtualbox = await vb.save();
 
         // External API call
-        const response = await fetch('http://localhost:3000/api/init', {
+        const response = await fetch('https://cloudcollabortivecodeeditor-2xts.onrender.com/api/init', {
             method: 'POST',
             body: JSON.stringify({ virtualboxId: savedVirtualbox.id, type: vb.type }),
             headers: {
                 'Content-Type': 'application/json',
+
             },
         });
         console.log("hello")
@@ -585,7 +591,7 @@ app.post("/api/liveblocks/:id", async (req, res) => {
     try {
 
         const userResponse = await fetch(
-            `http://localhost:3000/api/user/${userId}`,
+            `https://cloudcollabortivecodeeditor-2xts.onrender.com/api/user/${userId}`,
             {
               method: "GET" 
             }

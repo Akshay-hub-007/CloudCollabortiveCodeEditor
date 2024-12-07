@@ -19,7 +19,7 @@ const createLiveblocksClient = (userId) => {
 //  }
 console.log()
   return  createClient({
-    authEndpoint: `http://localhost:3000/api/liveblocks/user_2mc9a4ENUW2GZjXZ2xhMDXYmnfS`, // Correct usage with template literals
+    authEndpoint: `https://cloudcollabortivecodeeditor-2xts.onrender.com/api/liveblocks/user_2mc9a4ENUW2GZjXZ2xhMDXYmnfS`, // Correct usage with template literals
   });
 };
 

@@ -17,7 +17,7 @@ function Layout() {
         const fetchOrCreateUser = async () => {
             if (isLoaded && user) {
                 try {
-                    const response = await axios.get(`http://localhost:3000/api/user/${user.id}`);
+                    const response = await axios.get(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api/user/${user.id}`);
                     if (response.data) {
                         setDbUser(response.data);
                     }
@@ -30,7 +30,7 @@ function Layout() {
                                 name: user.fullName || "New User", 
                                 email: user.emailAddresses?.[0]?.emailAddress || `${user.id}@example.com` // Safe email check
                             };
-                            const createUserResponse = await axios.post('http://localhost:3000/api/user', newUser);
+                            const createUserResponse = await axios.post('https://cloudcollabortivecodeeditor-2xts.onrender.com/api/user', newUser);
                             setDbUser(createUserResponse.data);
                         } catch (createErr) {
                             console.error("Error creating user!", createErr);

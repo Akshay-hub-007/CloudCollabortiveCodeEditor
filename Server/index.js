@@ -16,7 +16,9 @@ const { log } = require("console");
 const { saveFileRL, createFileRL, deleteFileRL, renameFileRL, MAX_BODY_SIZE } = require("./src/ratelimiter");
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
+    origin: ['http://localhost:5173','https://cloud-collabortive-code-editor.vercel.app/'],
+    methods:['GET','POST'],
+    credentials:true
   },
 });
 let isOwnerConnected=false
@@ -43,7 +45,7 @@ io.use(async (socket, next) => {
   const { userId, virtualboxId } = value;
   console.log("hello", userId, virtualboxId)
   try {
-    const response = await fetch(`http://localhost:3000/api/user/${userId}`);
+    const response = await fetch(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api/user/${userId}`);
     if (!response.ok) throw new Error("Failed to fetch user data");
 
     const userData = await response.json();
@@ -311,7 +313,7 @@ socket.on("resizeTerminal",(dimensions)=>
     async (fileName, code, line, instructions, callback) => {
         try {
             const fetchPromise = fetch(
-                `http://localhost:3000/api/virtualbox/generate`,
+                `https://cloudcollabortivecodeeditor-2xts.onrender.com/api/virtualbox/generate`,
                 {
                     method: "POST",
                     headers: {

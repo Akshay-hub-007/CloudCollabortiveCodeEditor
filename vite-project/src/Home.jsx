@@ -11,6 +11,7 @@ function Home() {
 
   useEffect(() => {
     if (isLoaded && user) {
+      console.log("navigate to dashboard")
       navigate('/dashboard'); 
     }
   }, [isLoaded, user, navigate]);
@@ -27,7 +28,7 @@ function Home() {
           if (isLoaded && user) {
               console.log(user)
               try {
-                  const response = await axios.get(`http://localhost:3000/api/user/${user.id}`);
+                  const response = await axios.get(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api/user/${user.id}`);
                   if (response.data) {
                       setDbUser(response.data);
                   }
@@ -39,7 +40,7 @@ function Home() {
                               name: user.fullName+" "+user.lastName|| "New User",
                               email: user.emailAddresses[0].emailAddress || `${user.id}@example.com` 
                           };
-                          const createUserResponse = await axios.post('http://localhost:3000/api/user', newUser);
+                          const createUserResponse = await axios.post('https://cloudcollabortivecodeeditor-2xts.onrender.com/api/user', newUser);
                           setDbUser(createUserResponse.data);
                       } catch (createErr) {
                           console.error("Error creating user!", createErr);

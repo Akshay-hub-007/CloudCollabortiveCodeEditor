@@ -28,7 +28,7 @@ console.log(virtualboxId)
     if (isLoaded && user && virtualboxId) {
       const fetchUserData = async () => {
         try {
-          const response = await axios.get(`http://localhost:3000/api/user/${user.id}`);
+          const response = await axios.get(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api/user/${user.id}`);
           console.log("User data:", response.data); // Debugging log
           setUserData(response.data);
         } catch (error) {
@@ -38,7 +38,7 @@ console.log(virtualboxId)
        
       const fetchVirtualboxData = async () => {
         try {
-          const response = await axios.get(`http://localhost:3000/api/virtualbox/${virtualboxId}`);
+          const response = await axios.get(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api/virtualbox/${virtualboxId}`);
           setVirtualboxData(response.data.virtualboxData);
           console.log("Virtualbox data:", response.data); // Debugging log
 
@@ -66,7 +66,7 @@ console.log(virtualboxId)
             
             sharedData.map(async (user) => {
               console.log(user)
-              const userRes = await axios.get(`http://localhost:3000/api/user/${user.userId}`);
+              const userRes = await axios.get(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api/user/${user.userId}`);
               console.log(userRes);
               return { id: userRes.data.id, name: userRes.data.name };
             })

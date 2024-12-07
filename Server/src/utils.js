@@ -2,7 +2,7 @@ const { default: Groq } = require("groq-sdk");
 
 const renamedFile = async (fileId, newFileId, data) => {
    
-    const res = await fetch("http://localhost:3000/api/rename", {
+    const res = await fetch("https://cloudcollabortivecodeeditor-2xts.onrender.com/api/rename", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -19,7 +19,7 @@ const renamedFile = async (fileId, newFileId, data) => {
 const saveFile = async (fileId, data) => {
     try {
         console.log("lorem*5ecefcevcevevevercercer")
-      const res = await fetch("http://localhost:3000/api/save", {
+      const res = await fetch("https://cloudcollabortivecodeeditor-2xts.onrender.com/api/save", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +41,7 @@ const saveFile = async (fileId, data) => {
 
   const createFile = async (fileId) => {
     try {
-      const res = await fetch("http://localhost:3000/api", {
+      const res = await fetch("https://cloudcollabortivecodeeditor-2xts.onrender.com/api", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const saveFile = async (fileId, data) => {
   
   const deleteFile = async (fileId) => {
     try {
-      const res = await fetch("http://localhost:3000/api", {
+      const res = await fetch("https://cloudcollabortivecodeeditor-2xts.onrender.com/api", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -122,14 +122,14 @@ const saveFile = async (fileId, data) => {
   };
   
 const getProjectSize=async(id)=>{
-  const res = await fetch(`http://localhost:3000/api/size${id}`)
+  const res = await fetch(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api/size${id}`)
 
   return (await res.json()).size;
 
 }
 
 const getfolder = async (folderId) => {
-  const res = await fetch(`http://localhost:3000/api?folderId=${folderId}`);
+  const res = await fetch(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api?folderId=${folderId}`);
   if (!res.ok) {
       throw new Error('Network response was not ok');
   }

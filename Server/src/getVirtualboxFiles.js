@@ -2,7 +2,7 @@ const getVirtualBoxFiles = async (id) => {
   // console.log("Fetching VirtualBox files for ID:", id); // Debug log
 
   try {
-    const response = await fetch(`http://localhost:3000/api?virtualboxId=${id}`);
+    const response = await fetch(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api?virtualboxId=${id}`);
     console.log("hii",response)
     if (!response.ok) {
       throw new Error("Failed to fetch VirtualBox files");
@@ -90,7 +90,7 @@ const processFiles = async (paths, id) => {
 const fetchFileContent = async (fileId) => {
   try {
     console.log("Fetching content for file ID:", fileId); // Debug log
-    const fileRes = await fetch(`http://localhost:3000/api?fileId=${fileId}`);
+    const fileRes = await fetch(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api?fileId=${fileId}`);
     return await fileRes.text();
   } catch (err) {
     console.error("Error fetching file content for file ID:", fileId, err.message);
