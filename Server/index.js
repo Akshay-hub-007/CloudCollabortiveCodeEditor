@@ -16,7 +16,7 @@ const { log } = require("console");
 const { saveFileRL, createFileRL, deleteFileRL, renameFileRL, MAX_BODY_SIZE } = require("./src/ratelimiter");
 const io = new Server(httpServer, {
   cors: {
-    origin: ['http://localhost:5173','https://cloud-collabortive-code-editor.vercel.app/'],
+    origin: ['http://localhost:5173','https://cloud-collabortive-code-editor.vercel.app/',"https://cloudcollabortivecodeeditor-1-to4i.onrender.com/dashboard"],
     methods:['GET','POST'],
     credentials:true
   },
