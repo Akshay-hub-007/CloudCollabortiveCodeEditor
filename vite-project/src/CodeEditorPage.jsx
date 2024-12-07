@@ -14,12 +14,11 @@ export default function CodeEditorPage() {
   const [virtualboxData, setVirtualboxData] = useState(null);
   const [sharedData, setSharedData] = useState([]);
   const [sendData, setSendData] = useState([]);
-  const navigate=useNavigate()
+  const navigate=useNavigate();
  console.log(user)
   const virtualboxId = id;
 console.log(virtualboxId)
 
-  // Fetch user and virtualbox data
   useEffect(() => {
     if(!user)
       {

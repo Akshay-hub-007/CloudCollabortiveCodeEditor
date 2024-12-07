@@ -24,9 +24,11 @@ import { Cursors } from './live/cursors';
 import { Awareness } from 'y-protocols/awareness';
 import Disables from './live/Disables';
 import PreviewWindow from './preview/PreviewWindow';
+import { useUser } from '@clerk/clerk-react';
 function CodeEditor({ userData, virtualboxData, isSharedUser }) {
   console.log(virtualboxData)
-  console.log(userData)
+  const { isLoaded,user}=useUser();
+ console.log(user)
   const [editorRef, setEditorRef] = useState();
   const monacoRef = useRef(null)
   const [tabs, setTabs] = useState([]);
