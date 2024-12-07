@@ -1,8 +1,8 @@
 import { FilePlus, FolderPlus, Loader2, MonitorPlay, Search, Sparkles } from "lucide-react";
-import SidebarFile from "./file";
-import SidebarFolder from "./Folder";
+import SidebarFile from "./File.jsx";
+import SidebarFolder from "./Folder.jsx";
 import { useEffect, useRef, useState } from "react";
-import New from "./New";
+import New from "./New.jsx";
 import Toggle from "../../../components/ui/customToggle";
 import { draggable, dropTargetForElements, monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { Switch } from "../../../components/ui/switch";
