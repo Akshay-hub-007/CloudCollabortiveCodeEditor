@@ -60,7 +60,7 @@ function CodeEditor({ userData, virtualboxData, isSharedUser }) {
   useEffect(() => {
     if (userData && virtualboxData) {
       console.log(virtualboxData, userData.id)
-      socketRef.current = io(`${serverUrl}?userId=${userData.id}&virtualboxId=${virtualboxData.id}`);
+      socketRef.current = io(`https://cloudcollabortivecodeeditor-2.onrender.com?userId=${userData.id}&virtualboxId=${virtualboxData.id}`);
       socket = socketRef.current;
       console.log(socket)
       const resizeObserver = new ResizeObserver((entries) => {
