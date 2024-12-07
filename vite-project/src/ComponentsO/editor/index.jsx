@@ -20,7 +20,7 @@ import LiveblocksProvider from "@liveblocks/yjs";
 // ... rest of the imports ...import { Awareness } from 'y-protocols/awareness';
 // import { useRoom } from '../../../src/liveblocks.config';
 // import Avatar from '../../../src/components/ui/avatar';
-import  Cursors  from './live/cursors.jsx';
+import  Cursors  from './live/Cursors.jsx';
 import { Awareness } from 'y-protocols/awareness';
 import Disables from './live/Disables';
 import PreviewWindow from './preview/PreviewWindow';
