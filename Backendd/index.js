@@ -17,7 +17,7 @@ const { URL } = require("url");
 app.use(express.json());
 app.use(cors(
     {
-     origin:['https://cloud-collabortive-code-editor.vercel.app','http://localhost:4173','https://cloudcollabortivecodeeditor-1-to4i.onrender.com'],
+     origin:['https://cloud-collabortive-code-editor.vercel.app','http://localhost:5173'],
      credentials:true
     }
 ));
@@ -37,9 +37,9 @@ mongoose.connect(process.env.MONGODB_URI)
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    id: { type: String, required: true, unique: true },
+    id: { type: String, required: true },
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true },
     image: { type: String },
   generations: { type: Number, default: 0 },
 });
@@ -91,13 +91,14 @@ app.get("/api/user/:id", async (req, res) => {
             const user = await User.findOne({ id: id });
             console.log(user, "gf");
 
-            // if (!user) {
-            //     return res.status(404).send({ message: 'User not found' });
-            // }
+            // Check if user exists
+            if (!user) {
+                return res.status(404).send({ message: 'User not found' });
+            }
 
             // Ensure empty arrays if no data is found
-            const virtualBoxData = await Virtualbox.find({ userId: user.id }) || [];
-            const userTovirtualboxData = await UsersToVirtualboxes.find({ userId: user.id }) || [];
+            const virtualBoxData = await Virtualbox.find({ userId: user?.id }) || [];
+            const userTovirtualboxData = await UsersToVirtualboxes.find({ userId: user?.id }) || [];
 
             const combinedUserData = {
                 ...user.toObject(),
@@ -640,19 +641,29 @@ app.post("/api/liveblocks/:id", async (req, res) => {
     }
   });
   app.post('/api/user', async (req, res) => {
+    const { id, name, email } = req.body;
+    console.log(req.body);
+    if (!id || !name || !email) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
     try {
-      
-        console.log(req.body);
-        const { id, name, email } =  req.body;
+        // Ensure `id` is used as the unique key to avoid conflicts with `name`
+        const result = await User.findOneAndUpdate(
+            { id }, // Query based on user ID
+            { id, name, email }, // New data
+            { upsert: true, new: true } // Create if not exists
+        );
 
-        const result = await User.create({ id, name, email });
-
-        res.status(201).send(result);
+        const statusCode = result.isNew ? 201 : 200;
+        res.status(statusCode).send(result);
     } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: 'Internal server error' });
+        console.error('Error creating/updating user:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+
 // Start the server
 
 const MAX_ROOMS_PER_TOKEN = 20;
