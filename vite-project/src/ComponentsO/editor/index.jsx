@@ -2,7 +2,7 @@ import React, { useRef, Suspense, lazy, useState, useEffect, Children } from 're
 import { Button } from "../../components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../../components/ui/resizable';
 import { FileJson, Loader2, Plus, SquareTerminal, TerminalSquare, X } from "lucide-react";
-import Sidebar from './sidebar/index.jsx';
+import Sidebar from './sidebar/Index.jsx';
 import { io } from "socket.io-client";
 import { processFiles } from '../../lib/utils';
 import { toast } from 'sonner';
