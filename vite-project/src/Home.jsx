@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Button } from './components/ui/button';
 import { useUser } from '@clerk/clerk-react';
 import axios from 'axios';
