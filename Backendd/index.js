@@ -17,7 +17,7 @@ const { URL } = require("url");
 app.use(express.json());
 app.use(cors(
     {
-     origin:['https://cloud-collabortive-code-editor.vercel.app','http://localhost:5173'],
+     origin:['https://cloud-collabortive-code-editor.vercel.app','http://localhost:4173','https://cloudcollabortivecodeeditor-1-to4i.onrender.com'],
      credentials:true
     }
 ));
