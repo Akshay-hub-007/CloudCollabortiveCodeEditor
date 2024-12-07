@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import DashBoardSearch from '../../navbar/DashBoardSearch';
 // import Layout from './Layout';
 import Userbutton from '../../../components/ui/Userbutton';
-import EditVirtualboxModal from './edit';
+import EditVirtualboxModal from './Edit';
 import { Button } from '../../../components/ui/button';
 import ShareVirtualboxModal from "./Share"
 import { Avatars } from '../live/avatars';
