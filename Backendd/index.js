@@ -111,9 +111,9 @@ app.get("/api/user/virtualbox/:userId", async (req, res) => {
 
     try {
         const virtualBoxData = await Virtualbox.find({ userId });
-        if (!virtualBoxData || virtualBoxData.length === 0) {
-            return res.status(404).send("No virtual box data found");
-        }
+        // if (!virtualBoxData || virtualBoxData.length === 0) {
+        //     return res.status(404).send("No virtual box data found");
+        // }
         const userTovirtualboxData=await UsersToVirtualboxes.find({userId:userId})
         const combinedUserData = {
             // ...user.toObject(),
@@ -291,9 +291,9 @@ app.get("/api/virtualbox/:id", async (req, res) => {
     const id = req.params.id;
     try {
         const virtualboxData = await Virtualbox.findOne({ id });
-        if (!virtualboxData) {
-            return res.status(404).send("No virtual box data found");
-        }
+        // if (!virtualboxData) {
+        //     return res.status(404).send("No virtual box data found");
+        // }
         const usersToVirtualboxes = await UsersToVirtualboxes.find({
             virtualboxId:id})
      
