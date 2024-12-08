@@ -45,7 +45,7 @@ io.use(async (socket, next) => {
   const { userId, virtualboxId } = value;
   console.log("hello", userId, virtualboxId)
   try {
-    const response = await fetch(`https://cloudcollabortivecodeeditor-2xts.onrender.com/api/user/${userId}`);
+    const response = await fetch(`https://cloudcollabortivecodeeditor-backend.onrender.com/api/user/${userId}`);
     if (!response.ok) throw new Error("Failed to fetch user data");
 
     const userData = await response.json();

@@ -17,7 +17,7 @@ const { URL } = require("url");
 app.use(express.json());
 app.use(cors(
     {
-     origin:['https://cloud-collabortive-code-editor.vercel.app','http://localhost:4173'],
+     origin:['https://cloud-collabortive-code-editor.vercel.app','http://localhost:4173',"https://cloudcollabortivecodeeditor-1-to4i.onrender.com"],
      credentials:true
     }
 ));
@@ -603,7 +603,7 @@ app.post("/api/liveblocks/:id", async (req, res) => {
     try {
 
         const userResponse = await fetch(
-            `https://cloudcollabortivecodeeditor-2xts.onrender.com/api/user/${userId}`,
+            `https://cloudcollabortivecodeeditor-backend.onrender.com/api/user/${userId}`,
             {
               method: "GET" 
             }
