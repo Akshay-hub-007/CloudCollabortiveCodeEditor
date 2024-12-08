@@ -17,7 +17,7 @@ const { URL } = require("url");
 app.use(express.json());
 app.use(cors(
     {
-     origin:['https://cloud-collabortive-code-editor.vercel.app','http://localhost:5173'],
+     origin:['https://cloud-collabortive-code-editor.vercel.app','http://localhost:4173'],
      credentials:true
     }
 ));
@@ -422,7 +422,7 @@ app.put('/api/virtualbox', async (req, res) => {
         const savedVirtualbox = await vb.save();
 
         // External API call
-        const response = await fetch('https://cloudcollabortivecodeeditor-2xts.onrender.com/api/init', {
+        const response = await fetch('https://cloudcollabortivecodeeditor-backend.onrender.com/api/init', {
             method: 'POST',
             body: JSON.stringify({ virtualboxId: savedVirtualbox.id, type: vb.type }),
             headers: {
@@ -655,8 +655,8 @@ app.post("/api/liveblocks/:id", async (req, res) => {
             { upsert: true, new: true } // Create if not exists
         );
 
-        const statusCode = result.isNew ? 201 : 200;
-        res.status(statusCode).send(result);
+        // const statusCode = result.isNew ? 201 : 200;
+        res.status(200).send(result);
     } catch (error) {
         console.error('Error creating/updating user:', error);
         res.status(500).json({ error: 'Internal server error' });

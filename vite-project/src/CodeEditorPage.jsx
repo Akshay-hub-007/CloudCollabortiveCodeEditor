@@ -58,7 +58,7 @@ console.log(virtualboxId)
   useEffect(() => {
     const getSharedUsers = async () => {
      
-      if (sharedData.length > 0) {
+      // if (sharedData.length > 0) {
         try {
           console.log("Fetching shared users with data:", sharedData); // Debugging log
           const shared = await Promise.all(
@@ -76,7 +76,7 @@ console.log(virtualboxId)
         } catch (error) {
           console.error('Error fetching shared users:', error);
         }
-      }
+      // }
     };
 
     getSharedUsers();
